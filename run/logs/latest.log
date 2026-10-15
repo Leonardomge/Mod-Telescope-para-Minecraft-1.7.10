@@ -1,0 +1,31 @@
+[22:26:11] [main/INFO]: Setting user: Desenvolvedor
+[22:26:13] [Client thread/INFO]: LWJGL Version: 2.9.4
+[22:26:17] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Mod Telescópio
+[22:26:18] [Client thread/INFO]: Created: 16x16 textures/blocks-atlas
+[22:26:18] [Client thread/INFO]: Created: 16x16 textures/items-atlas
+[22:26:18] [Client thread/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Mod Telescópio
+[22:26:18] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[22:26:18] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[22:26:19] [Sound Library Loader/INFO]: Sound engine started
+[22:26:19] [Sound Library Loader/INFO]: Sound engine started
+[22:26:24] [Server thread/INFO]: Starting integrated minecraft server version 1.7.10
+[22:26:24] [Server thread/INFO]: Generating keypair
+[22:26:24] [Server thread/INFO]: Converting map!
+[22:26:24] [Server thread/INFO]: Scanning folders...
+[22:26:24] [Server thread/INFO]: Total conversion count is 0
+[22:26:24] [Server thread/INFO]: Preparing start region for level 0
+[22:26:25] [Server thread/INFO]: Preparing spawn area: 32%
+[22:26:26] [Server thread/INFO]: Preparing spawn area: 80%
+[22:26:27] [Server thread/INFO]: Changing view distance to 12, from 10
+[22:26:27] [Server thread/INFO]: Desenvolvedor[local:E:6cc068b0] logged in with entity id 161 at (-30.5, 64.0, 199.5)
+[22:26:27] [Server thread/INFO]: Desenvolvedor joined the game
+[22:26:29] [Server thread/INFO]: Desenvolvedor has just earned the achievement [Taking Inventory]
+[22:26:29] [Client thread/INFO]: [CHAT] Desenvolvedor has just earned the achievement [Taking Inventory]
+[22:30:05] [Client thread/INFO]: Stopping!
+[22:30:05] [Server thread/INFO]: Stopping server
+[22:30:05] [Server thread/INFO]: Saving players
+[22:30:05] [Server thread/INFO]: Saving worlds
+[22:30:05] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
+[22:30:05] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
+[22:30:05] [Server thread/INFO]: Saving chunks for level 'New World'/The End
+[22:30:05] [Client Shutdown Thread/INFO]: Stopping server

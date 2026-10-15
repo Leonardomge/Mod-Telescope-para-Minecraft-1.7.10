@@ -1,0 +1,15 @@
+[
+  {
+    "modid": "telescopio",
+    "name": "Mod Telescópio",
+    "description": "Telescópios reais (Sky-Watcher, Celestron, Meade, Takahashi, William Optics, Orion) que você coloca no mundo e usa para observar com zoom de verdade: refratores, refletores Newtonianos, Maksutov-Cassegrain e Schmidt-Cassegrain.",
+    "version": "1.0.0",
+    "mcversion": "1.7.10",
+    "url": "",
+    "authorList": ["Leonardo"],
+    "credits": "Modelos 3D procedurais feitos a partir das medidas reais de cada telescópio.",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

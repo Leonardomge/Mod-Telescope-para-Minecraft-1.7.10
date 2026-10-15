@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        maven {
+            // RetroFuturaGradle: o ForgeGradle moderno para 1.7.10 mantido pela GT New Horizons
+            name = 'GTNH Maven'
+            url = 'https://nexus.gtnewhorizons.com/repository/public/'
+        }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    // Baixa automaticamente o JDK 8 usado para compilar o mod
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'ModTelescopio-1.7.10'

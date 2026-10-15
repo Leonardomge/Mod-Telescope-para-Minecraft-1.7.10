@@ -1,0 +1,51 @@
+plugins {
+    id 'com.gtnewhorizons.retrofuturagradle' version '2.0.6'
+}
+
+group = mod_group
+version = mod_version
+
+base {
+    archivesName = "${mod_id}-1.7.10"
+}
+
+// O Minecraft 1.7.10 roda em Java 8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+        vendor = JvmVendorSpec.AZUL
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+minecraft {
+    mcVersion = '1.7.10'
+    username = 'Desenvolvedor'
+    extraRunJvmArguments.add("-ea:${project.group}")
+}
+
+repositories {
+    maven {
+        name = 'Forge'
+        url = 'https://maven.minecraftforge.net/'
+    }
+    maven {
+        name = 'GTNH Maven'
+        url = 'https://nexus.gtnewhorizons.com/repository/public/'
+    }
+    maven {
+        name = 'Mojang'
+        url = 'https://libraries.minecraft.net/'
+    }
+    mavenCentral()
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.property 'version', project.version
+    filesMatching('mcmod.info') {
+        expand 'modVersion': project.version
+    }
+}
