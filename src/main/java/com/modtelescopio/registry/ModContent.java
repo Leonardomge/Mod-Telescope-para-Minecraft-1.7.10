@@ -1,11 +1,15 @@
 package com.modtelescopio.registry;
 
 import com.modtelescopio.TelescopioMod;
+import com.modtelescopio.block.BlockMount;
 import com.modtelescopio.block.BlockTelescope;
 import com.modtelescopio.block.TileTelescope;
 import com.modtelescopio.common.ComponentType;
+import com.modtelescopio.common.MountBlockType;
 import com.modtelescopio.common.TelescopeType;
 import com.modtelescopio.item.ItemComponent;
+import com.modtelescopio.item.ItemMountBlock;
+import com.modtelescopio.item.ItemOta;
 import com.modtelescopio.item.ItemTelescope;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -27,6 +31,9 @@ import java.util.Map;
 public final class ModContent {
     public static final Map<TelescopeType, BlockTelescope> TELESCOPES =
             new EnumMap<TelescopeType, BlockTelescope>(TelescopeType.class);
+    public static final Map<MountBlockType, BlockMount> MOUNTS =
+            new EnumMap<MountBlockType, BlockMount>(MountBlockType.class);
+    public static final Map<TelescopeType, ItemOta> OTAS = new EnumMap<TelescopeType, ItemOta>(TelescopeType.class);
     public static final Map<ComponentType, ItemComponent> COMPONENTS =
             new EnumMap<ComponentType, ItemComponent>(ComponentType.class);
 
@@ -38,19 +45,39 @@ public final class ModContent {
         }
     };
 
+    public static final CreativeTabs TAB_PARTS = new CreativeTabs(TelescopioMod.MODID + "_pecas") {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public Item getTabIconItem() {
+            return Item.getItemFromBlock(MOUNTS.get(MountBlockType.MOUNT_EQ6R_PRO));
+        }
+    };
+
     private ModContent() {
     }
 
     public static void registerAll() {
-        for (ComponentType c : ComponentType.values()) {
-            ItemComponent item = new ItemComponent(c);
-            GameRegistry.registerItem(item, c.id);
-            COMPONENTS.put(c, item);
-        }
         for (TelescopeType t : TelescopeType.values()) {
             BlockTelescope block = new BlockTelescope(t);
             GameRegistry.registerBlock(block, ItemTelescope.class, t.id);
             TELESCOPES.put(t, block);
+        }
+        for (MountBlockType m : MountBlockType.values()) {
+            BlockMount block = new BlockMount(m);
+            GameRegistry.registerBlock(block, ItemMountBlock.class, m.id);
+            MOUNTS.put(m, block);
+        }
+        for (TelescopeType t : TelescopeType.values()) {
+            if (t.hasOta) {
+                ItemOta item = new ItemOta(t);
+                GameRegistry.registerItem(item, t.otaId());
+                OTAS.put(t, item);
+            }
+        }
+        for (ComponentType c : ComponentType.values()) {
+            ItemComponent item = new ItemComponent(c);
+            GameRegistry.registerItem(item, c.id);
+            COMPONENTS.put(c, item);
         }
         GameRegistry.registerTileEntity(TileTelescope.class, TelescopioMod.MODID + ":telescope");
     }
@@ -68,12 +95,27 @@ public final class ModContent {
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(COMPONENTS.get(c), c.count), args.toArray()));
         }
         for (TelescopeType t : TelescopeType.values()) {
-            Object[] inputs = new Object[t.recipe.length];
-            for (int i = 0; i < inputs.length; i++) {
-                inputs[i] = ingredient(t.recipe[i]);
+            ItemStack telescope = new ItemStack(TELESCOPES.get(t));
+            GameRegistry.addRecipe(new ShapelessOreRecipe(telescope, ingredients(t.fullRecipe())));
+            if (t.hasOta) {
+                GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(OTAS.get(t)), ingredients(t.opticsRecipe)));
+                String[] fromTube = new String[t.mountRecipe.length + 1];
+                fromTube[0] = t.otaId();
+                System.arraycopy(t.mountRecipe, 0, fromTube, 1, t.mountRecipe.length);
+                GameRegistry.addRecipe(new ShapelessOreRecipe(telescope.copy(), ingredients(fromTube)));
             }
-            GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TELESCOPES.get(t)), inputs));
         }
+        for (MountBlockType m : MountBlockType.values()) {
+            GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(MOUNTS.get(m)), ingredients(m.recipe)));
+        }
+    }
+
+    private static Object[] ingredients(String[] tokens) {
+        Object[] out = new Object[tokens.length];
+        for (int i = 0; i < tokens.length; i++) {
+            out[i] = ingredient(tokens[i]);
+        }
+        return out;
     }
 
     /** Traduz os nomes de ingrediente do catálogo para itens/ore dictionary do 1.7.10. */
@@ -81,6 +123,11 @@ public final class ModContent {
         for (ComponentType c : ComponentType.values()) {
             if (c.id.equals(token)) {
                 return COMPONENTS.get(c);
+            }
+        }
+        for (TelescopeType t : TelescopeType.values()) {
+            if (t.hasOta && t.otaId().equals(token)) {
+                return OTAS.get(t);
             }
         }
         if (token.startsWith("dye_")) {
@@ -108,6 +155,9 @@ public final class ModContent {
         if ("diamond".equals(token)) {
             return "gemDiamond";
         }
+        if ("diamond_block".equals(token)) {
+            return "blockDiamond";
+        }
         if ("iron_block".equals(token)) {
             return "blockIron";
         }
@@ -128,6 +178,12 @@ public final class ModContent {
         }
         if ("clock".equals(token)) {
             return new ItemStack(Items.clock);
+        }
+        if ("coal".equals(token)) {
+            return new ItemStack(Items.coal, 1, 0);
+        }
+        if ("nether_star".equals(token)) {
+            return new ItemStack(Items.nether_star);
         }
         throw new IllegalArgumentException("Ingrediente desconhecido no catálogo: " + token);
     }

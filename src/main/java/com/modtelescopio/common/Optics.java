@@ -15,8 +15,36 @@ public final class Optics {
     public static final double APPARENT_FIELD = 52.0;
 
     private static final int[] EYEPIECES_MM = {40, 32, 25, 20, 15, 12, 9, 6, 4, 3};
+    /** Passos de zoom digital dos telescópios que só usam câmera. */
+    public static final float[] DIGITAL_ZOOM = {1.0F, 1.5F, 2.0F, 3.0F, 4.0F, 6.0F};
+    /** Tempo de exposição de cada quadro do empilhamento ao vivo, em segundos. */
+    public static final int STACK_EXPOSURE_S = 10;
 
     private Optics() {
+    }
+
+    /** Campo da câmera (largura) em graus. */
+    public static double cameraFieldW(TelescopeType t) {
+        return Math.toDegrees(2.0 * Math.atan(t.sensorW / (2.0 * t.focal)));
+    }
+
+    /** Campo da câmera (altura) em graus. */
+    public static double cameraFieldH(TelescopeType t) {
+        return Math.toDegrees(2.0 * Math.atan(t.sensorH / (2.0 * t.focal)));
+    }
+
+    /**
+     * Zoom de câmera do jogo para um telescópio que só usa câmera. Usa a mesma relação das
+     * oculares (campo da tela ≈ 12x o campo real), aplicada à altura do sensor.
+     */
+    public static float cameraZoom(TelescopeType t, float digitalZoom) {
+        double fieldH = cameraFieldH(t) / digitalZoom;
+        return (float) Math.max(1.5, Math.min(64.0, 70.0 / (12.1 * fieldH)));
+    }
+
+    /** Ganho extra de brilho do empilhamento ao vivo (as imagens vão clareando com o tempo). */
+    public static float stackingBoost(double seconds) {
+        return (float) Math.min(0.55, seconds / 90.0 * 0.55);
     }
 
     /**

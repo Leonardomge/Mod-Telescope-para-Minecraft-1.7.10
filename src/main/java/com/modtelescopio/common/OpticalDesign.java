@@ -7,7 +7,12 @@ public enum OpticalDesign {
     NEWTONIAN("newtonian"),
     NEWTONIAN_TRUSS("newtonian_truss"),
     MAKSUTOV("maksutov"),
-    SCHMIDT_CASSEGRAIN("schmidt_cassegrain");
+    SCHMIDT_CASSEGRAIN("schmidt_cassegrain"),
+    RITCHEY_CHRETIEN("ritchey_chretien"),
+    RITCHEY_CHRETIEN_TRUSS("ritchey_chretien_truss"),
+    CDK("cdk"),
+    RASA("rasa"),
+    SMART("smart");
 
     public final String key;
 
@@ -21,5 +26,10 @@ public enum OpticalDesign {
 
     public boolean isRefractor() {
         return this == REFRACTOR_ACHROMAT || this == REFRACTOR_APO;
+    }
+
+    /** Telescópios sem ocular: a observação é pela "tela" da câmera (inteligentes e RASA). */
+    public boolean usesCamera() {
+        return this == SMART || this == RASA;
     }
 }

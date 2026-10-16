@@ -10,3 +10,63 @@
 [22:26:10] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
 [22:26:10] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
 [22:26:10] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[17:50:54] [main/INFO] [GradleStart]: userProperties: {}
+[17:50:54] [main/INFO] [GradleStart]: assetsDir: C:\Users\User\.gradle\caches\retro_futura_gradle\assets
+[17:50:54] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[17:50:54] [main/INFO] [GradleStart]: accessToken: 0
+[17:50:54] [main/INFO] [GradleStart]: version: 1.7.10
+[17:50:54] [main/INFO] [GradleStart]: username: Desenvolvedor
+[17:50:54] [main/INFO] [GradleStart]: Extra: [--width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8]
+[17:50:54] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, C:\Users\User\.gradle\caches\retro_futura_gradle\assets, --assetIndex, 1.7.10, --accessToken, {REDACTED}, --version, 1.7.10, --username, Desenvolvedor, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[17:50:54] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[17:50:54] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[17:50:54] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[17:50:54] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[17:53:22] [main/INFO] [GradleStart]: userProperties: {}
+[17:53:22] [main/INFO] [GradleStart]: assetsDir: C:\Users\User\.gradle\caches\retro_futura_gradle\assets
+[17:53:22] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[17:53:22] [main/INFO] [GradleStart]: accessToken: 0
+[17:53:22] [main/INFO] [GradleStart]: version: 1.7.10
+[17:53:22] [main/INFO] [GradleStart]: username: Desenvolvedor
+[17:53:22] [main/INFO] [GradleStart]: Extra: [--width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8]
+[17:53:22] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, C:\Users\User\.gradle\caches\retro_futura_gradle\assets, --assetIndex, 1.7.10, --accessToken, {REDACTED}, --version, 1.7.10, --username, Desenvolvedor, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[17:53:22] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[17:53:22] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[17:53:22] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[17:53:22] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[18:00:39] [main/INFO] [GradleStart]: userProperties: {}
+[18:00:39] [main/INFO] [GradleStart]: assetsDir: C:\Users\User\.gradle\caches\retro_futura_gradle\assets
+[18:00:39] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[18:00:39] [main/INFO] [GradleStart]: accessToken: 0
+[18:00:39] [main/INFO] [GradleStart]: version: 1.7.10
+[18:00:39] [main/INFO] [GradleStart]: username: Desenvolvedor
+[18:00:39] [main/INFO] [GradleStart]: Extra: [--width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8]
+[18:00:39] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, C:\Users\User\.gradle\caches\retro_futura_gradle\assets, --assetIndex, 1.7.10, --accessToken, {REDACTED}, --version, 1.7.10, --username, Desenvolvedor, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[18:00:39] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:00:39] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:00:39] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[18:00:39] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[18:04:39] [main/INFO] [GradleStart]: userProperties: {}
+[18:04:39] [main/INFO] [GradleStart]: assetsDir: C:\Users\User\.gradle\caches\retro_futura_gradle\assets
+[18:04:39] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[18:04:39] [main/INFO] [GradleStart]: accessToken: 0
+[18:04:39] [main/INFO] [GradleStart]: version: 1.7.10
+[18:04:39] [main/INFO] [GradleStart]: username: Desenvolvedor
+[18:04:39] [main/INFO] [GradleStart]: Extra: [--width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8]
+[18:04:39] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, C:\Users\User\.gradle\caches\retro_futura_gradle\assets, --assetIndex, 1.7.10, --accessToken, {REDACTED}, --version, 1.7.10, --username, Desenvolvedor, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[18:04:39] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:04:39] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:04:39] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[18:04:39] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[18:11:01] [main/INFO] [GradleStart]: userProperties: {}
+[18:11:01] [main/INFO] [GradleStart]: assetsDir: C:\Users\User\.gradle\caches\retro_futura_gradle\assets
+[18:11:01] [main/INFO] [GradleStart]: assetIndex: 1.7.10
+[18:11:01] [main/INFO] [GradleStart]: accessToken: 0
+[18:11:01] [main/INFO] [GradleStart]: version: 1.7.10
+[18:11:01] [main/INFO] [GradleStart]: username: Desenvolvedor
+[18:11:01] [main/INFO] [GradleStart]: Extra: [--width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8]
+[18:11:01] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, C:\Users\User\.gradle\caches\retro_futura_gradle\assets, --assetIndex, 1.7.10, --accessToken, {REDACTED}, --version, 1.7.10, --username, Desenvolvedor, --tweakClass, cpw.mods.fml.common.launcher.FMLTweaker, --width, 1280, --height, 720, --gameDir, C:\Users\User\Desktop\Projetos com Programação\ModTelescopioMinecraft\forge-1.7.10\run, --uuid, e52eff27-4023-4ad7-96d9-25ea430459e8, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[18:11:01] [main/INFO] [LaunchWrapper]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:11:01] [main/INFO] [LaunchWrapper]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:11:01] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[18:11:01] [main/INFO] [LaunchWrapper]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker

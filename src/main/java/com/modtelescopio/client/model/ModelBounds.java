@@ -3,27 +3,35 @@ package com.modtelescopio.client.model;
 import com.modtelescopio.common.Optics;
 import com.modtelescopio.common.TelescopeType;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Caixa envolvente do modelo na pose padrão. Usada para encaixar o telescópio no
- * ícone do inventário e na mão do jogador, qualquer que seja o tamanho dele.
+ * ícone do inventário, na mão do jogador e para a área de renderização no mundo.
  */
 public final class ModelBounds implements QuadSink {
-    private static final Map<TelescopeType, ModelBounds> CACHE = new EnumMap<TelescopeType, ModelBounds>(TelescopeType.class);
+    private static final Map<String, ModelBounds> CACHE = new HashMap<String, ModelBounds>();
 
     public float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE;
     public float maxX = -Float.MAX_VALUE, maxY = -Float.MAX_VALUE, maxZ = -Float.MAX_VALUE;
 
-    public static synchronized ModelBounds of(TelescopeType type) {
-        ModelBounds b = CACHE.get(type);
+    public static synchronized ModelBounds of(Assembly a) {
+        ModelBounds b = CACHE.get(a.key);
         if (b == null) {
             b = new ModelBounds();
-            TelescopeModel.build(new ModelBuilder().reset(b), type, 0f, 0f, Optics.DEFAULT_ALTITUDE);
-            CACHE.put(type, b);
+            TelescopeModel.build(new ModelBuilder().reset(b), a, 0f, 0f, Optics.DEFAULT_ALTITUDE);
+            if (b.minX > b.maxX) {
+                b.minX = b.minY = b.minZ = -0.5f;
+                b.maxX = b.maxY = b.maxZ = 0.5f;
+            }
+            CACHE.put(a.key, b);
         }
         return b;
+    }
+
+    public static ModelBounds of(TelescopeType type) {
+        return of(Assembly.of(type));
     }
 
     @Override
@@ -50,8 +58,19 @@ public final class ModelBounds implements QuadSink {
         return maxY - minY;
     }
 
+    public float width() {
+        return Math.max(maxX - minX, maxZ - minZ);
+    }
+
     public float maxDimension() {
         return Math.max(maxY - minY, Math.max(maxX - minX, maxZ - minZ));
+    }
+
+    /** Maior distância horizontal a partir do centro do bloco (o tubo gira, então vale para qualquer lado). */
+    public float horizontalReach() {
+        float r = Math.max(Math.max(Math.abs(minX), Math.abs(maxX)), Math.max(Math.abs(minZ), Math.abs(maxZ)));
+        // com o tubo apontando para outro lado o alcance pode crescer até a altura do modelo
+        return Math.max(r, height() * 0.75f);
     }
 
     /** Escala para que a maior dimensão do modelo ocupe {@code size} blocos. */

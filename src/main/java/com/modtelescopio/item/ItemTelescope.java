@@ -12,9 +12,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 
 import java.util.List;
-import java.util.Locale;
 
-/** Item do telescópio no inventário (renderizado em 3D pelo ItemRendererTelescope). */
+/** Item do telescópio completo no inventário (renderizado em 3D pelo ItemRendererTelescope). */
 public class ItemTelescope extends ItemBlock {
     public ItemTelescope(Block block) {
         super(block);
@@ -30,11 +29,7 @@ public class ItemTelescope extends ItemBlock {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean advanced) {
         TelescopeType t = getType();
-        String design = StatCollector.translateToLocal(t.design.langKey());
-        String ratio = String.format(Locale.ROOT, "%.1f", t.focalRatio());
-        lines.add(EnumChatFormatting.AQUA + StatCollector.translateToLocalFormatted("telescopio.tooltip.optics",
-                design, t.aperture, ratio));
-        lines.add(EnumChatFormatting.GRAY + StatCollector.translateToLocalFormatted("telescopio.tooltip.focal", t.focal));
+        TooltipHelper.optics(lines, t);
         String mount = StatCollector.translateToLocal(t.mount.langKey());
         if (!t.mountName.isEmpty()) {
             mount += " (" + t.mountName + ")";
@@ -43,7 +38,7 @@ public class ItemTelescope extends ItemBlock {
         if (t.goTo) {
             lines.add(EnumChatFormatting.GREEN + StatCollector.translateToLocal("telescopio.tooltip.goto"));
         }
-        lines.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC
-                + StatCollector.translateToLocal("telescopio.tooltip.use"));
+        TooltipHelper.extras(lines, t);
+        TooltipHelper.hint(lines, "telescopio.tooltip.use");
     }
 }

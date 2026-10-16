@@ -13,6 +13,6 @@ public class ItemComponent extends Item {
         this.type = type;
         setUnlocalizedName(TelescopioMod.MODID + "." + type.id);
         setTextureName(TelescopioMod.MODID + ":" + type.id);
-        setCreativeTab(ModContent.TAB);
+        setCreativeTab(ModContent.TAB_PARTS);
     }
 }

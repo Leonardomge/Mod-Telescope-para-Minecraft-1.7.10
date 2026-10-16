@@ -1,9 +1,9 @@
 package com.modtelescopio.client;
 
+import com.modtelescopio.client.model.Assembly;
 import com.modtelescopio.client.model.ModelBuilder;
 import com.modtelescopio.client.model.QuadSink;
 import com.modtelescopio.client.model.TelescopeModel;
-import com.modtelescopio.common.TelescopeType;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -17,8 +17,8 @@ public final class TessellatorSink implements QuadSink {
     private TessellatorSink() {
     }
 
-    /** Desenha o telescópio na matriz GL atual (origem = centro da base do bloco). */
-    public void render(TelescopeType type, float facingYaw, float aimYaw, float aimAlt) {
+    /** Desenha o conjunto na matriz GL atual (origem = centro da base do bloco). */
+    public void render(Assembly assembly, float facingYaw, float aimYaw, float aimAlt) {
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_CULL_FACE);
@@ -26,7 +26,7 @@ public final class TessellatorSink implements QuadSink {
         GL11.glShadeModel(GL11.GL_SMOOTH);
         Tessellator tess = Tessellator.instance;
         tess.startDrawingQuads();
-        TelescopeModel.build(builder.reset(this), type, facingYaw, aimYaw, aimAlt);
+        TelescopeModel.build(builder.reset(this), assembly, facingYaw, aimYaw, aimAlt);
         tess.draw();
         GL11.glPopAttrib();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

@@ -1,15 +1,18 @@
 package com.modtelescopio.client;
 
+import com.modtelescopio.client.model.Assembly;
 import com.modtelescopio.client.model.ModelBounds;
 import com.modtelescopio.common.Optics;
-import com.modtelescopio.common.TelescopeType;
+import com.modtelescopio.item.ItemMountBlock;
+import com.modtelescopio.item.ItemOta;
 import com.modtelescopio.item.ItemTelescope;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
 
-/** Telescópio em 3D no inventário, na mão e caído no chão. */
+/** Telescópios, montagens e tubos ópticos em 3D no inventário, na mão e caídos no chão. */
 public class ItemRendererTelescope implements IItemRenderer {
     @Override
     public boolean handleRenderType(ItemStack item, ItemRenderType type) {
@@ -30,13 +33,27 @@ public class ItemRendererTelescope implements IItemRenderer {
         }
     }
 
+    static Assembly assemblyOf(ItemStack stack) {
+        Item item = stack.getItem();
+        if (item instanceof ItemTelescope) {
+            return Assembly.of(((ItemTelescope) item).getType());
+        }
+        if (item instanceof ItemMountBlock) {
+            return Assembly.of(((ItemMountBlock) item).getMount(), null);
+        }
+        if (item instanceof ItemOta) {
+            return Assembly.tubeOnly(((ItemOta) item).type);
+        }
+        return null;
+    }
+
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-        if (!(item.getItem() instanceof ItemTelescope)) {
+        Assembly a = assemblyOf(item);
+        if (a == null) {
             return;
         }
-        TelescopeType t = ((ItemTelescope) item.getItem()).getType();
-        ModelBounds b = ModelBounds.of(t);
+        ModelBounds b = ModelBounds.of(a);
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GL11.glPushMatrix();
         switch (type) {
@@ -60,7 +77,7 @@ public class ItemRendererTelescope implements IItemRenderer {
                 fit(b, 1.1F, false);
                 break;
         }
-        TessellatorSink.INSTANCE.render(t, 0.0F, 0.0F, Optics.DEFAULT_ALTITUDE);
+        TessellatorSink.INSTANCE.render(a, 0.0F, 0.0F, Optics.DEFAULT_ALTITUDE);
         GL11.glPopMatrix();
         GL11.glPopAttrib();
     }

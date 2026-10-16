@@ -1,8 +1,11 @@
 package com.modtelescopio.client;
 
 import com.modtelescopio.TelescopioMod;
+import com.modtelescopio.block.BlockMount;
 import com.modtelescopio.block.BlockTelescope;
 import com.modtelescopio.block.TileTelescope;
+import com.modtelescopio.client.model.Assembly;
+import com.modtelescopio.client.model.ModelBounds;
 import com.modtelescopio.common.Optics;
 import com.modtelescopio.common.TelescopeType;
 import com.modtelescopio.network.MessageAim;
@@ -12,17 +15,20 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 
 /**
  * Estado da observação no cliente: zoom (FOV), sensibilidade do mouse proporcional ao
- * aumento, ganho de luz, troca de oculares pela roda do mouse e sincronização da mira.
+ * aumento, ganho de luz, troca de oculares (ou zoom digital da câmera) pela roda do mouse e
+ * sincronização da mira.
  *
  * <p>O 1.7.10 não tem evento de FOV, então FOV/sensibilidade/gamma são trocados só durante
  * o quadro (RenderTick START) e restaurados no fim (END) - nada é salvo no options.txt.</p>
@@ -30,15 +36,18 @@ import net.minecraftforge.client.event.RenderHandEvent;
 public final class ClientObservation {
     public static final ClientObservation INSTANCE = new ClientObservation();
 
-    private static final double MAX_DISTANCE_SQ = 4.5 * 4.5;
-
     private boolean active;
     private int bx, by, bz;
+    /** Tubo usado na observação e o conjunto desenhado (telescópio completo ou montagem + tubo). */
     private TelescopeType type;
+    private Assembly assembly;
+    private String title = "";
+    private boolean camera;
     private int[] eyepieces = new int[]{25};
-    private int eyepieceIndex;
+    private int stepIndex;
     private float zoom = 1.0F;
-    private long lastFrameNanos;
+    private long lastFrameNanos, startNanos;
+    private double maxDistanceSq = 4.5 * 4.5;
     private int savedThirdPerson;
 
     private float lastSentYaw = Float.NaN, lastSentAlt;
@@ -48,6 +57,8 @@ public final class ClientObservation {
     /** Segurar o botão direito repete o clique a cada 4 ticks: só alterna de novo depois de soltar. */
     private boolean waitRelease;
     private float savedFov, savedSensitivity, savedGamma;
+    /** Por que a última observação terminou (diagnóstico do teste automático). */
+    public String lastStopReason = "";
 
     private ClientObservation() {
     }
@@ -60,21 +71,50 @@ public final class ClientObservation {
         return type;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    /** true = telescópio que só usa câmera (inteligentes e RASA): zoom digital em vez de oculares. */
+    public boolean isCamera() {
+        return camera;
+    }
+
     public int[] getEyepieces() {
         return eyepieces;
     }
 
-    public int getEyepieceIndex() {
-        return eyepieceIndex;
+    public int getStepIndex() {
+        return stepIndex;
     }
 
     public int currentEyepiece() {
-        return eyepieces[eyepieceIndex];
+        return eyepieces[Math.min(stepIndex, eyepieces.length - 1)];
+    }
+
+    public float currentDigitalZoom() {
+        return Optics.DIGITAL_ZOOM[Math.min(stepIndex, Optics.DIGITAL_ZOOM.length - 1)];
+    }
+
+    /** Segundos desde que a observação começou (empilhamento ao vivo das câmeras). */
+    public double secondsObserving() {
+        return (System.nanoTime() - startNanos) / 1.0e9;
+    }
+
+    /** Só para o teste automático: escolhe a ocular/zoom digital. */
+    public void setStepForTest(int index) {
+        int count = camera ? Optics.DIGITAL_ZOOM.length : eyepieces.length;
+        stepIndex = Math.max(0, Math.min(count - 1, index));
+    }
+
+    /** Só para o teste automático: o teste não segura o botão direito. */
+    public void releaseForTest() {
+        waitRelease = false;
     }
 
     public void toggle(int x, int y, int z) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (waitRelease) {
+        if (waitRelease || mc.theWorld == null) {
             return;
         }
         waitRelease = true;
@@ -82,27 +122,47 @@ public final class ClientObservation {
             stop();
             return;
         }
-        Block block = mc.theWorld.getBlock(x, y, z);
-        if (!(block instanceof BlockTelescope)) {
+        TileEntity te = mc.theWorld.getTileEntity(x, y, z);
+        if (!(te instanceof TileTelescope)) {
+            return;
+        }
+        TileTelescope tile = (TileTelescope) te;
+        TelescopeType tube = tile.opticalTube();
+        Assembly a = tile.assembly();
+        if (tube == null || a == null) {
             return;
         }
         if (active) {
             stop();
         }
-        type = ((BlockTelescope) block).type;
+        type = tube;
+        assembly = a;
+        title = titleOf(mc.theWorld.getBlock(x, y, z), tube);
+        camera = tube.design.usesCamera();
         bx = x;
         by = y;
         bz = z;
         eyepieces = Optics.eyepiecesFor(type);
-        eyepieceIndex = 0;
+        stepIndex = 0;
         zoom = 1.0F;
-        lastFrameNanos = System.nanoTime();
+        // telescópios gigantes: dá para observar de mais longe (a ocular fica lá no alto)
+        double reach = Math.max(4.5, ModelBounds.of(a).height() * 0.6 + 3.0);
+        maxDistanceSq = reach * reach;
+        lastFrameNanos = startNanos = System.nanoTime();
         lastSentYaw = Float.NaN;
         sendCooldown = 0;
         savedThirdPerson = mc.gameSettings.thirdPersonView;
         mc.gameSettings.thirdPersonView = 0;
         active = true;
         click(0.8F);
+    }
+
+    private static String titleOf(Block block, TelescopeType tube) {
+        String tubeName = I18n.format("tile." + TelescopioMod.MODID + "." + tube.id + ".name");
+        if (block instanceof BlockMount) {
+            return tubeName + " · " + I18n.format("tile." + TelescopioMod.MODID + "." + ((BlockMount) block).mount.id + ".name");
+        }
+        return tubeName;
     }
 
     public void stop() {
@@ -142,6 +202,13 @@ public final class ClientObservation {
                 PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), pitch));
     }
 
+    private float targetZoom() {
+        if (camera) {
+            return Optics.cameraZoom(type, currentDigitalZoom());
+        }
+        return Optics.zoomFor(Optics.magnification(type, currentEyepiece()));
+    }
+
     // ------------------------------------------------------------------ eventos
 
     @SubscribeEvent
@@ -163,8 +230,12 @@ public final class ClientObservation {
             return;
         }
         TileTelescope tile = tile();
-        if (tile == null || player.isSneaking() || player.isDead
-                || player.getDistanceSq(bx + 0.5, by + 0.5, bz + 0.5) > MAX_DISTANCE_SQ) {
+        Block block = mc.theWorld.getBlock(bx, by, bz);
+        boolean valid = tile != null && (block instanceof BlockTelescope || block instanceof BlockMount)
+                && tile.opticalTube() == type;
+        if (!valid || player.isSneaking() || player.isDead
+                || player.getDistanceSq(bx + 0.5, by + 0.5, bz + 0.5) > maxDistanceSq) {
+            lastStopReason = !valid ? "bloco" : player.isSneaking() ? "agachou" : player.isDead ? "morreu" : "distancia";
             stop();
             return;
         }
@@ -188,8 +259,7 @@ public final class ClientObservation {
             long now = System.nanoTime();
             float dt = Math.min(0.1F, (now - lastFrameNanos) / 1.0e9F);
             lastFrameNanos = now;
-            float target = Optics.zoomFor(Optics.magnification(type, currentEyepiece()));
-            zoom += (target - zoom) * Math.min(1.0F, dt * 10.0F);
+            zoom += (targetZoom() - zoom) * Math.min(1.0F, dt * 10.0F);
 
             if (mc.currentScreen == null || mc.currentScreen instanceof GuiChat) {
                 savedFov = gs.fovSetting;
@@ -200,7 +270,11 @@ public final class ClientObservation {
                 float f = savedSensitivity * 0.6F + 0.2F;
                 float fz = f / (float) Math.cbrt(zoom);
                 gs.mouseSensitivity = (fz - 0.2F) / 0.6F;
-                gs.gammaSetting = savedGamma + Optics.lightGatheringBoost(type);
+                float boost = Optics.lightGatheringBoost(type);
+                if (camera) {
+                    boost += Optics.stackingBoost(secondsObserving());
+                }
+                gs.gammaSetting = savedGamma + boost;
                 swapped = true;
             }
         } else if (swapped) {
@@ -216,13 +290,22 @@ public final class ClientObservation {
         if (!active || event.dwheel == 0 || Minecraft.getMinecraft().currentScreen != null) {
             return;
         }
-        int next = eyepieceIndex + (event.dwheel > 0 ? 1 : -1);
-        next = Math.max(0, Math.min(eyepieces.length - 1, next));
-        if (next != eyepieceIndex) {
-            eyepieceIndex = next;
+        int count = camera ? Optics.DIGITAL_ZOOM.length : eyepieces.length;
+        int next = stepIndex + (event.dwheel > 0 ? 1 : -1);
+        next = Math.max(0, Math.min(count - 1, next));
+        if (next != stepIndex) {
+            stepIndex = next;
             click(1.5F);
         }
         event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public void onBlockHighlight(DrawBlockHighlightEvent event) {
+        // o contorno do bloco mirado ficaria enorme na imagem ampliada
+        if (active) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
@@ -239,6 +322,9 @@ public final class ClientObservation {
         }
         switch (event.type) {
             case ALL:
+                // O Forge dispara o evento ALL ANTES de trocar para a projeção 2D da interface.
+                // Sem isto a máscara era desenhada dentro do mundo 3D e às vezes cobria a tela toda.
+                Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
                 ObservationOverlay.draw(this, event.resolution);
                 break;
             case HELMET:

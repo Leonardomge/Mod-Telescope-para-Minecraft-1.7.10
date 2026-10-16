@@ -21,10 +21,28 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
+// Teste automático com capturas de tela (só desenvolvimento): gradlew runClient -Pautotest=true
+def autotest = (project.findProperty('autotest') ?: 'false').toString().toBoolean()
+
 minecraft {
     mcVersion = '1.7.10'
     username = 'Desenvolvedor'
     extraRunJvmArguments.add("-ea:${project.group}")
+    extraRunJvmArguments.add("-Dtelescopio.autotest=${autotest}")
+}
+
+if (autotest) {
+    tasks.named('runClient').configure {
+        args '--width', '1280', '--height', '720'
+    }
+}
+
+// o código do teste automático não vai para o .jar distribuído
+// (no teste ele precisa estar no jar, porque o runClient do RFG carrega o mod a partir dele)
+if (!autotest) {
+    tasks.named('jar', Jar).configure {
+        exclude 'com/modtelescopio/autotest/**'
+    }
 }
 
 repositories {

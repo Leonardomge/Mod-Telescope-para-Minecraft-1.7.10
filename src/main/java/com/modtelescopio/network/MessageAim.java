@@ -86,7 +86,8 @@ public class MessageAim implements IMessage {
         if (!world.blockExists(m.x, m.y, m.z)) {
             return;
         }
-        if (player.getDistanceSq(m.x + 0.5, m.y + 0.5, m.z + 0.5) > 64.0) {
+        // os telescópios gigantes (até 10 blocos) podem ser observados de mais longe
+        if (player.getDistanceSq(m.x + 0.5, m.y + 0.5, m.z + 0.5) > 32.0 * 32.0) {
             return;
         }
         if (Float.isNaN(m.yaw) || Float.isNaN(m.alt) || Float.isInfinite(m.yaw) || Float.isInfinite(m.alt)) {

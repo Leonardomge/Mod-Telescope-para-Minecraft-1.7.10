@@ -1,50 +1,53 @@
 package com.modtelescopio.client;
 
-import com.modtelescopio.block.BlockTelescope;
+import com.modtelescopio.block.BlockTelescopeBase;
 import com.modtelescopio.block.TileTelescope;
+import com.modtelescopio.client.model.Assembly;
 import com.modtelescopio.common.Optics;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 
-/** Desenha o telescópio colocado no mundo, com o tubo apontando para onde foi mirado. */
+/** Desenha telescópios e montagens colocados no mundo, com o tubo apontando para onde foi mirado. */
 public class RenderTelescope extends TileEntitySpecialRenderer {
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks) {
         if (!(te instanceof TileTelescope)) {
             return;
         }
-        Block block = te.getBlockType();
-        if (!(block instanceof BlockTelescope)) {
+        TileTelescope tile = (TileTelescope) te;
+        Assembly assembly = tile.assembly();
+        if (assembly == null) {
             return;
         }
-        TileTelescope tile = (TileTelescope) te;
-        float facing = BlockTelescope.facingYaw(te.getBlockMetadata());
+        if (tile.liveAim && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
+            // quem está olhando pela ocular não vê o próprio telescópio: o tubo bem na frente do
+            // olho cobriria a imagem ampliada (os outros jogadores continuam vendo normalmente)
+            return;
+        }
+        float facing = BlockTelescopeBase.facingYaw(te.getBlockMetadata());
         updateRenderAim(tile, partialTicks);
 
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y, z + 0.5);
-        TessellatorSink.INSTANCE.render(((BlockTelescope) block).type, facing, tile.renderYaw, tile.renderAlt);
+        TessellatorSink.INSTANCE.render(assembly, facing, tile.renderYaw, tile.renderAlt);
         GL11.glPopMatrix();
     }
 
     private static void updateRenderAim(TileTelescope tile, float partialTicks) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        float yaw, alt;
         if (tile.liveAim && player != null) {
             // o jogador local está olhando por este telescópio: o tubo segue a câmera sem atraso
-            yaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks;
-            alt = -(player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partialTicks);
+            float yaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks;
+            float alt = -(player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partialTicks);
             tile.renderYaw = yaw;
             tile.renderAlt = Optics.clampAltitude(alt);
             tile.renderInit = true;
             return;
         }
-        yaw = tile.getAimYaw();
-        alt = tile.getAimAlt();
+        float yaw = tile.getAimYaw(), alt = tile.getAimAlt();
         if (!tile.renderInit) {
             tile.renderYaw = yaw;
             tile.renderAlt = alt;
